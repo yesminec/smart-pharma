@@ -7,7 +7,7 @@ typedef struct {
     int quantite;
     char dateExpiration[20];
 } Medicament;
-Medicament meds[3];
+Medicament meds[100];
 int n = 0;
 //1//
 void ajouterMedicament() {
