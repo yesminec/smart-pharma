@@ -273,6 +273,18 @@ int main()
         else if(c1==8){
             MiseAJourApresApprovisionnement();
         }
+         else if(c1==9){
+            PrixTot();
+        }
+         else if(c1==10){
+            reste();
+        }
+         else if(c1==11){
+            gestionpai();
+        }
+         else if(c1==12){
+            histo();
+        }
     }
     while (c1!=13);
     return 0;
