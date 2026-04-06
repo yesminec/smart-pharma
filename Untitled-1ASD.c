@@ -164,6 +164,54 @@ void MiseAJourApresApprovisionnement(){
     }
     printf("Le Médicament n'existe pas");
 }
+void EnregistrerVente(){
+    float prixunitaire;
+    printf("ID vente:");
+    scanf("%d",&ventes[nbVentes].idVente);
+    printf("ID produit: ");
+    scanf("%d",&ventes[nbVentes].idProduit);
+    printf("quantite:");
+    scanf("%d",&ventes[nbVentes].quantite);
+    printf("prix unitaire: ");
+    scanf("%f", &ventes[nbVentes].prixunitaire);
+}
+void PrixTot(){
+    ventes[nbVentes].prixTotal =ventes[nbVentes].quantite * ventes[nbVentes].prixunitaire;
+}
+void reste(){
+    printf("Montant paye: ");
+    scanf("%f", &ventes[nbVentes].montantpaye);
+    printf("\nTotal: %.2f\n", ventes[nbVentes].prixTotal);
+}
+void gestionpai(){
+    if (ventes[nbVentes].montantpaye >= ventes[nbVentes].prixTotal){
+        ventes[nbVentes].reste = ventes[nbVentes].montantpaye - ventes[nbVentes].prixTotal;
+        printf("Paiement accepte\n");
+        printf("Reste: %.2f\n", ventes[nbVentes].reste);
+    }
+    else{
+        printf("Paiement insuffisant !\n");
+    }
+    nbVentes++;
+void histo(){
+    int i;
+    if (nbVentes == 0) {
+        printf("\nAucune vente enregistree.\n");
+    }
+    else
+    {
+        printf("\n--- Historique des ventes ---\n");
+        for(i = 0; i < nbVentes; i++)
+        {
+            printf("\nVente %d\n", i+1);
+            printf("ID vente: %d\n", ventes[i].idVente);
+            printf("ID produit: %d\n", ventes[i].idProduit);
+            printf("Quantite: %d\n", ventes[i].quantite);
+            printf("Prix unitaire: %.2f\n", ventes[i].prixunitaire);
+            printf("Prix total: %.2f\n", ventes[i].prixTotal);
+        }
+    }
+}
 int main()
 {
     int c1,c2,id_med; 
