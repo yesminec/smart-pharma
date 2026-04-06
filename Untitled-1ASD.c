@@ -9,6 +9,17 @@ typedef struct {
 } Medicament;
 Medicament meds[100];
 int n = 0;
+struct Vente {
+    int idVente;
+    int idProduit;
+    int quantite;
+    float prixTotal;
+    float montantpaye;
+    float reste;
+    float  prixunitaire;
+};
+struct Vente ventes[100];
+    int nbVentes=0;
 //1//
 void ajouterMedicament() {
 printf("ID: ");
