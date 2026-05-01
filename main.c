@@ -250,6 +250,8 @@ int main()
         else if(c1==8){
             MiseAJourApresApprovisionnement();
         }
+        else if(c1==9){
+            Vente* ajouterVente(Vente *liste)
         system("pause");
     }
     while (c1!=13);
@@ -353,30 +355,6 @@ void afficherHistorique(Vente *liste) {
         }
     }
 }
-
-int main() {
-    Vente *liste = NULL;
-    int choix;
-
-    do {
-        printf("\n===== SmartPharma =====\n");
-        printf("1. Enregistrer une vente\n");
-        printf("2. Afficher historique\n");
-        printf("0. Quitter\n");
-        printf("Donner votre choix: ");
-        scanf("%d", &choix);
-
-        if (choix == 1) {
-            liste = ajouterVente(liste);
-        } else if (choix == 2) {
-            afficherHistorique(liste);
-        } else if (choix == 0) {
-            printf("Fin du programme.\n");
-        } else {
-            printf("Choix invalide.\n");
-        }
-
-    } while (choix != 0);
 
     return 0;
 }
