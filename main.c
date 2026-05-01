@@ -253,5 +253,130 @@ int main()
         system("pause");
     }
     while (c1!=13);
+
+    typedef struct Vente {
+    int idVente;
+    int idProduit;
+    int quantite;
+    float prixUnitaire;
+    float prixTotal;
+    float montantPaye;
+    float reste;
+    struct Vente *suivant;
+} Vente;
+
+/* Fonction qui calcule le prix total */
+float calculerTotal(int quantite, float prixUnitaire) {
+    return quantite * prixUnitaire;
+}
+
+/* Procedure pour ajouter une vente dans la liste */
+Vente* ajouterVente(Vente *liste) {
+    Vente *nouvelleVente;
+
+    nouvelleVente = (Vente*) malloc(sizeof(Vente));
+
+    printf("\n--- Nouvelle vente ---\n");
+
+    printf("ID vente: ");
+    scanf("%d", &nouvelleVente->idVente);
+
+    printf("ID produit: ");
+    scanf("%d", &nouvelleVente->idProduit);
+
+    printf("Quantite: ");
+    scanf("%d", &nouvelleVente->quantite);
+
+    printf("Prix unitaire: ");
+    scanf("%f", &nouvelleVente->prixUnitaire);
+
+    nouvelleVente->prixTotal = calculerTotal(
+        nouvelleVente->quantite,
+        nouvelleVente->prixUnitaire
+    );
+
+    printf("Montant donne par le client: ");
+    scanf("%f", &nouvelleVente->montantPaye);
+
+    printf("\nMontant total a payer: %.2f DT\n", nouvelleVente->prixTotal);
+    printf("Montant donne par le client: %.2f DT\n", nouvelleVente->montantPaye);
+
+    if (nouvelleVente->montantPaye >= nouvelleVente->prixTotal) {
+        nouvelleVente->reste = nouvelleVente->montantPaye - nouvelleVente->prixTotal;
+
+        printf("Paiement suffisant.\n");
+        printf("Reste a rendre: %.2f DT\n", nouvelleVente->reste);
+    } else {
+        nouvelleVente->reste = nouvelleVente->prixTotal - nouvelleVente->montantPaye;
+
+        printf("Paiement insuffisant.\n");
+        printf("Reste a payer: %.2f DT\n", nouvelleVente->reste);
+    }
+
+    nouvelleVente->suivant = liste;
+    liste = nouvelleVente;
+
+    return liste;
+}
+
+/* Procedure pour afficher l'historique des ventes */
+void afficherHistorique(Vente *liste) {
+    Vente *p;
+    int i = 1;
+
+    if (liste == NULL) {
+        printf("\nAucune vente enregistree.\n");
+    } else {
+        printf("\n--- Historique des ventes ---\n");
+
+        p = liste;
+
+        while (p != NULL) {
+            printf("\nVente numero %d\n", i);
+            printf("ID vente: %d\n", p->idVente);
+            printf("ID produit: %d\n", p->idProduit);
+            printf("Quantite: %d\n", p->quantite);
+            printf("Prix unitaire: %.2f DT\n", p->prixUnitaire);
+            printf("Montant total: %.2f DT\n", p->prixTotal);
+            printf("Montant donne: %.2f DT\n", p->montantPaye);
+
+            if (p->montantPaye >= p->prixTotal) {
+                printf("Paiement: suffisant\n");
+                printf("Reste a rendre: %.2f DT\n", p->reste);
+            } else {
+                printf("Paiement: insuffisant\n");
+                printf("Reste a payer: %.2f DT\n", p->reste);
+            }
+
+            p = p->suivant;
+            i++;
+        }
+    }
+}
+
+int main() {
+    Vente *liste = NULL;
+    int choix;
+
+    do {
+        printf("\n===== SmartPharma =====\n");
+        printf("1. Enregistrer une vente\n");
+        printf("2. Afficher historique\n");
+        printf("0. Quitter\n");
+        printf("Donner votre choix: ");
+        scanf("%d", &choix);
+
+        if (choix == 1) {
+            liste = ajouterVente(liste);
+        } else if (choix == 2) {
+            afficherHistorique(liste);
+        } else if (choix == 0) {
+            printf("Fin du programme.\n");
+        } else {
+            printf("Choix invalide.\n");
+        }
+
+    } while (choix != 0);
+
     return 0;
 }
