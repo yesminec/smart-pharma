@@ -251,7 +251,15 @@ int main()
             MiseAJourApresApprovisionnement();
         }
         else if(c1==9){
-            Vente* ajouterVente(Vente *liste)
+            Vente* ajouterVente(Vente *liste);
+        }
+        else if(c1==10){
+            float calculerTotal(int quantite, float prixUnitaire);
+        }
+        else if(c1==11){
+           void afficherHistorique(Vente *liste);
+        }
+        
         system("pause");
     }
     while (c1!=13);
