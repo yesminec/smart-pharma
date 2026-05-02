@@ -13,6 +13,17 @@ typedef struct noeud{
    Medicament info;
    struct noeud* suivant;} Noeud;
 Noeud* tete = NULL;
+typedef struct Vente {
+    int idVente;
+    int idProduit;
+    int quantite;
+    float prixUnitaire;
+    float prixTotal;
+    float montantPaye;
+    float reste;
+    struct Vente *suivant;
+} Vente;
+Vente *liste = NULL;
 Medicament meds[100];
 int n = 0;
 //1//
@@ -24,72 +35,110 @@ Noeud* nouveau = (Noeud*)malloc(sizeof(Noeud));
     scanf("%s", nouveau->info.nom);
     printf("Prix: ");
     scanf("%f", &nouveau->info.prix);
-    printf("Quantit�: ");
+    printf("Quantité: ");
     scanf("%d", &nouveau->info.quantite);
     printf("Date expiration: ");
     scanf("%s", nouveau->info.dateExpiration);
     nouveau->suivant = tete;
     tete = nouveau;
-    printf("M�dicament ajout� avec succ�s!\n");
+    printf("Médicament ajouté avec succés!\n");
 }
 //2//
-void modifierMedicament (int id) {
-for(int i=0;i<n;i++) {
-    if (meds[i].id==id) {
-        printf("nouveau id:");
-        scanf("%d", &meds[i].id);
-        printf("nouveau nom:");
-        scanf("%s", meds[i].nom);
-        printf("nouvelle quantite:");
-        scanf("%d", &meds[i].quantite);
-        printf("nouveau prix:");
-        scanf("%f", &meds[i].prix);
-        printf("nouvelle date Expiration:");
-        scanf("%s", meds[i].dateExpiration);
-        printf("medicament modifi� avec succ�s.\n");
-        return;
+void modifierMedicament(int id) {
+    Noeud* courant = tete;
+    while(courant != NULL){
+        if(courant->info.id == id){
+            printf("nouveau id: ");
+            scanf("%d", &courant->info.id);
+            printf("nouveau nom: "); scanf("%49s", courant->info.nom);
+            printf("nouvelle quantite: "); scanf("%d", &courant->info.quantite);
+            printf("nouveau prix: "); scanf("%f", &courant->info.prix);
+            printf("nouvelle date Expiration: "); scanf("%9s", courant->info.dateExpiration);
+            printf("medicament modifié avec succes.\n");
+            return;
+        }
+        courant=courant->suivant;
     }
-}
-printf("medicament non trouver");
+    printf("medicament non trouve\n");
 }
 //3//
 void supprimer (int id) {
-    for (int i=0;i<n;i++) {
-        if (meds[i].id==id) {
-            for(int j=i;j<n-1;j++){
-                meds[j] = meds[j+1];
-            }
-        n--;
-        printf("medicament supprimer avec succes.\n");
-        return;}
+    Noeud* courant = tete;
+    Noeud* prev = NULL;
+    if(courant != NULL && courant->info.id == id){
+        tete = courant->suivant;
+        free(courant);
+        printf("Médicament supprimé avec succès.\n");
+        return;
     }
-    printf("medicament non trouver");
+    while(courant != NULL && courant->info.id != id){
+        prev = courant;
+        courant = courant->suivant;
+    }
+    if(courant == NULL){
+        printf("medicament non trouve\n");
+        return;
+    }
+    prev->suivant = courant->suivant;
+    free(courant);
+    printf("Médicament supprimé avec succès.\n");
 }
 //4//
-void afficherMedicamentExpires (char dateAujourdhui[])
-{
-    for (int i=0; i<n;i++) {
-        if (strcmp(meds[i].dateExpiration, dateAujourdhui) <0){
-            printf("medicament expire:\n");
-            printf("id: %d\n", meds[i].id);
-            printf("nom: %s\n", meds[i].nom);
-            printf("prix: %.2f\n", meds[i].prix);
-            printf("Quantit�e expir�e: %d\n",meds[i].quantite);
-            printf("date expiration: %s\n", meds[i].dateExpiration);
+void afficherMedicamentExpires(char dateAujourdhui[]){
+    Noeud* courant = tete;
+    printf("Les médicaments expirés sont: \n");
+    while(courant != NULL){
+        if(strcmp(courant->info.dateExpiration, dateAujourdhui) < 0){
+            printf("ID: %d\n", courant->info.id);
+            printf("nom: %s\n", courant->info.nom);
+            printf("prix: %.2f\n", courant->info.prix);
+            printf("date expiration: %s\n\n", courant->info.dateExpiration);
         }
+        courant = courant->suivant;
     }
-    printf("\n");
+    courant = tete;
+    printf("Les médicaments valides sont: \n");
+    while(courant != NULL){
+        if(strcmp(courant->info.dateExpiration, dateAujourdhui) >= 0){
+            printf("ID: %d\n", courant->info.id);
+            printf("nom: %s\n", courant->info.nom);
+            printf("prix: %.2f\n", courant->info.prix);
+            printf("date expiration: %s\n\n", courant->info.dateExpiration);
+        }
+        courant = courant->suivant;
+    }
+}
+//0//
+void sauvegarderDansFichier(const char* nomFichier){
+    FILE* f = fopen(nomFichier, "w");
+    if(f == NULL){
+        printf("Erreur ouverture fichier\n");
+        return;
+    }
+    Noeud* courant = tete;
+    while(courant != NULL){
+        fprintf(f, "%d %s %.2f %d %s\n",
+                courant->info.id,
+                courant->info.nom,
+                courant->info.prix,
+                courant->info.quantite,
+                courant->info.dateExpiration);
+
+        courant = courant->suivant;
+    }
+    fclose(f);
+    printf("Données sauvegardées avec succés.\n");
 }
 //5.a//
 void RechercheParNom(char nom_med[]){
     Noeud* courant = tete;
     while (courant != NULL) {
         if (strcmp(courant->info.nom, nom_med) == 0) {
-            printf("M�dicament trouv�:\n");
+            printf("Médicament trouvé:\n");
             printf("Nom: %s\n",  courant->info.nom);
             printf("ID: %d\n",   courant->info.id);
             printf("Prix: %.2f\n", courant->info.prix);
-            printf("Quantit�: %d\n", courant->info.quantite);
+            printf("Quantité: %d\n", courant->info.quantite);
             printf("Expiration: %s\n", courant->info.dateExpiration);
             return;
         }
@@ -102,11 +151,11 @@ void RechercheParID(int id_med){
     Noeud* courant = tete;
     while (courant != NULL) {
         if (courant->info.id == id_med) {
-           printf("M�dicament trouv�:\n");
+           printf("Médicament trouvé:\n");
            printf("Nom: %s\n",  courant->info.nom);
            printf("ID: %d\n",   courant->info.id);
            printf("Prix: %.2f\n", courant->info.prix);
-           printf("Quantit�: %d\n", courant->info.quantite);
+           printf("Quantité: %d\n", courant->info.quantite);
            printf("Expiration: %s\n", courant->info.dateExpiration);
            return;
         }
@@ -118,11 +167,11 @@ void RechercheParID(int id_med){
 void affichage_stock(){
     Noeud* courant;
     int compteur = 0;
-    printf("Les m�dicaments en stock:\n");
+    printf("Les médicaments en stock:\n");
     courant = tete;
     while (courant != NULL) {
         if (courant->info.quantite > 0) {
-            printf("Nom: %s | ID: %d | Quantit�: %d\n",
+            printf("Nom: %s | ID: %d | Quantité: %d\n",
                 courant->info.nom,
                 courant->info.id,
                 courant->info.quantite);
@@ -131,11 +180,9 @@ void affichage_stock(){
         courant = courant->suivant;
     }
     if (compteur == 0)
-        printf("Aucun m�dicament en stock.\n");
-
-    compteur = 0;  // r�initialise pour le 2�me passage
-
-    printf("Les m�dicaments en rupture de stock: \n");
+        printf("Aucun médicament en stock.\n");
+    compteur = 0;
+    printf("Les médicaments en rupture de stock: \n");
     courant = tete;
     while (courant != NULL) {
         if (courant->info.quantite == 0) {
@@ -147,13 +194,13 @@ void affichage_stock(){
         courant = courant->suivant;
     }
     if (compteur == 0)
-        printf("Aucun m�dicament en rupture de stock.\n");
+        printf("Aucun médicament en rupture de stock.\n");
 }
 //7//
 void MiseAJourApresVente(){
     int IDVente, QVendue;
-    printf("Donner le ID du m�dicament vendu"); scanf("%d",&IDVente);
-    printf("Donner la quantit� du m�dicament vendu"); scanf("%d",&QVendue);
+    printf("Donner le ID du médicament vendu"); scanf("%d",&IDVente);
+    printf("Donner la quantité du médicament vendu"); scanf("%d",&QVendue);
     Noeud* courant = tete;
     while (courant != NULL) {
         if (courant->info.id == IDVente) {
@@ -162,174 +209,63 @@ void MiseAJourApresVente(){
                         courant->info.quantite);
             } else {
                 courant->info.quantite -= QVendue;
-                printf("Vente effectu�e. Nouvelle quantit�: %d\n",
+                printf("Vente effectuée. Nouvelle quantité: %d\n",
                         courant->info.quantite);
             }
             return;
         }
         courant = courant->suivant;
     }
-    printf("M�dicament introuvable.\n");
+    printf("Médicament introuvable.\n");
 }
 //8//
 void MiseAJourApresApprovisionnement(){
     int IDAppro, QAppro;
-    printf("Donner le ID du m�dicament approvisionn�"); scanf("%d",&IDAppro);
-    printf("Donner la quantit�"); scanf("%d",&QAppro);
+    printf("Donner le ID du médicament approvisionné"); scanf("%d",&IDAppro);
+    printf("Donner la quantité"); scanf("%d",&QAppro);
     Noeud* courant = tete;
     while (courant != NULL) {
         if (courant->info.id == IDAppro) {
             courant->info.quantite += QAppro;
-            printf("Stock mis � jour. Nouvelle quantit�: %d\n",
+            printf("Stock mis à jour. Nouvelle quantité: %d\n",
                     courant->info.quantite);
             return;
         }
         courant = courant->suivant;
     }
-    printf("M�dicament introuvable.\n");
+    printf("Médicament introuvable.\n");
 }
-int main()
-{
-    int c1,c2,id_med;
-    char nom_medic[50], date_auj[10];
-    do{
-        system("cls");
-        printf("Choisir quelle fonctionnalit� � appliquer:\n");
-        printf("1. Ajouter un m�dicament\n");
-        printf("2. Modifier un m�dicament\n");
-        printf("3. Supprimer un m�dicament\n");
-        printf("4. Afficher tous les m�dicaments expir�s\n");
-        printf("5. Rechercher un m�dicament\n");
-        printf("6. Afficher les m�dicaments en stock et ceux en rupture\n");
-        printf("7. Mise � jour apr�s vente\n");
-        printf("8. Mise � jour apr�s approvisionnement\n");
-        printf("9. Enregistrer une vente\n");
-        printf("10. Calculer le prix total\n");
-        printf("11. Gestion des paiements\n");
-        printf("12. Afficher l�historique des ventes\n");
-        printf("13. Quitter\n");
-        scanf("%d",&c1);
-        while(getchar() != '\n');
-        if(c1==1){
-            ajouterMedicament();
-        }
-        else if(c1==2){
-            printf("Donner le ID du m�dicament � modifier");
-            scanf("%d",&id_med);
-            modifierMedicament(id_med);
-        }
-        else if(c1==3){
-            printf("Donner le ID du m�dicament � supprimer");
-            scanf("%d",&id_med);
-            supprimer(id_med);
-        }
-        else if(c1==4){
-            printf("Donner la date d'aujourdhui");
-            scanf("%s", date_auj);
-            afficherMedicamentExpires(date_auj);
-        }
-        else if(c1==5){
-            printf("Choisir: 1.Par Nom ou 2.Par ID\n");
-            scanf("%d",&c2);
-            if(c2==1){
-                printf("donner le nom du m�dic � chercher");
-                scanf("%s",&nom_medic);
-                RechercheParNom(nom_medic);
-            }
-            else if(c2==2){
-                printf("donner le ID du medicament à chercher");
-                scanf("%d",&id_med);
-                RechercheParID(id_med);
-            }
-        }
-        else if(c1==6){
-            affichage_stock();
-        }
-        else if(c1==7){
-            MiseAJourApresVente();}
-        else if(c1==8){
-            MiseAJourApresApprovisionnement();
-        }
-        else if(c1==9){
-            Vente* ajouterVente(Vente *liste);
-        }
-        else if(c1==10){
-            float calculerTotal(int quantite, float prixUnitaire);
-        }
-        else if(c1==11){
-           void afficherHistorique(Vente *liste);
-        }
-        
-        system("pause");
-    }
-    while (c1!=13);
-
-    typedef struct Vente {
-    int idVente;
-    int idProduit;
-    int quantite;
-    float prixUnitaire;
-    float prixTotal;
-    float montantPaye;
-    float reste;
-    struct Vente *suivant;
-} Vente;
-
-/* Fonction qui calcule le prix total */
+//10//
 float calculerTotal(int quantite, float prixUnitaire) {
     return quantite * prixUnitaire;
 }
-
-/* Procedure pour ajouter une vente dans la liste */
+//9//
 Vente* ajouterVente(Vente *liste) {
     Vente *nouvelleVente;
-
     nouvelleVente = (Vente*) malloc(sizeof(Vente));
-
-    printf("\n--- Nouvelle vente ---\n");
-
-    printf("ID vente: ");
-    scanf("%d", &nouvelleVente->idVente);
-
-    printf("ID produit: ");
-    scanf("%d", &nouvelleVente->idProduit);
-
-    printf("Quantite: ");
-    scanf("%d", &nouvelleVente->quantite);
-
-    printf("Prix unitaire: ");
-    scanf("%f", &nouvelleVente->prixUnitaire);
-
-    nouvelleVente->prixTotal = calculerTotal(
-        nouvelleVente->quantite,
-        nouvelleVente->prixUnitaire
-    );
-
-    printf("Montant donne par le client: ");
-    scanf("%f", &nouvelleVente->montantPaye);
-
+    printf("Nouvelle vente\n");
+    printf("ID vente: ");scanf("%d", &nouvelleVente->idVente);
+    printf("ID produit: ");scanf("%d", &nouvelleVente->idProduit);
+    printf("Quantite: ");scanf("%d", &nouvelleVente->quantite);
+    printf("Prix unitaire: ");scanf("%f", &nouvelleVente->prixUnitaire);
+    nouvelleVente->prixTotal = calculerTotal(nouvelleVente->quantite,nouvelleVente->prixUnitaire);
+    printf("Montant donne par le client: ");scanf("%f", &nouvelleVente->montantPaye);
     printf("\nMontant total a payer: %.2f DT\n", nouvelleVente->prixTotal);
     printf("Montant donne par le client: %.2f DT\n", nouvelleVente->montantPaye);
-
     if (nouvelleVente->montantPaye >= nouvelleVente->prixTotal) {
         nouvelleVente->reste = nouvelleVente->montantPaye - nouvelleVente->prixTotal;
-
         printf("Paiement suffisant.\n");
-        printf("Reste a rendre: %.2f DT\n", nouvelleVente->reste);
-    } else {
+        printf("Reste a rendre: %.2f DT\n", nouvelleVente->reste);}
+    else {
         nouvelleVente->reste = nouvelleVente->prixTotal - nouvelleVente->montantPaye;
-
         printf("Paiement insuffisant.\n");
         printf("Reste a payer: %.2f DT\n", nouvelleVente->reste);
     }
-
     nouvelleVente->suivant = liste;
     liste = nouvelleVente;
-
     return liste;
 }
-
-/* Procedure pour afficher l'historique des ventes */
+//11//
 void afficherHistorique(Vente *liste) {
     Vente *p;
     int i = 1;
@@ -357,12 +293,97 @@ void afficherHistorique(Vente *liste) {
                 printf("Paiement: insuffisant\n");
                 printf("Reste a payer: %.2f DT\n", p->reste);
             }
-
             p = p->suivant;
             i++;
         }
     }
 }
-
-    return 0;
+int main(){
+    int c1=0,c2=0,c3=0,id_med=0,q=0; float pUnitaire=0;
+    char nom_medic[50], date_auj[10];
+    do{
+        system("chcp 65001");
+        system("cls");
+        printf("Choisir quelle fonctionnalité à appliquer:\n");
+        printf("1. Gestion de médicaments\n");
+        printf("2. Gestion de stock\n");
+        printf("3. Gestion de ventes\n");
+        printf("4. Enregistrement dans un fichier\n");
+        printf("5. Quitter\n");
+        scanf("%d",&c1);
+        while(getchar() != '\n');
+        system("cls");
+        if(c1==1){
+            printf("Choisir quelle fonctionnalité à appliquer:\n");
+            printf("1. Ajouter un médicament\n");
+            printf("2. Modifier un médicament\n");
+            printf("3. Supprimer un médicament\n");
+            printf("4. Afficher tous les médicaments expirés\n");
+            scanf("%d", &c2);
+            system("cls");
+            if(c2==1)
+                ajouterMedicament();
+            else if(c2==2){
+                printf("Donner le ID du médicament à modifier: \n ");
+                scanf("%d", &id_med);
+                modifierMedicament(id_med);
+            }
+            else if(c2==3){
+                printf("Donner le ID du médicament à supprimer: \n");
+                scanf("%d", &id_med);
+                supprimer(id_med);
+            }
+            else if(c2==4){
+                printf("Date d'aujourd'hui: \n");
+                scanf("%9s", date_auj);
+                afficherMedicamentExpires(date_auj);
+            }
+        }
+        else if(c1==2){
+            printf("Choisir quelle fonctionnalité à appliquer:\n");
+            printf("1. Rechercher un médicament\n");
+            printf("2. Afficher les médicaments en stock et ceux en rupture\n");
+            printf("3. Mise à jour aprés venten");
+            printf("4. Mise à jour aprés approvisionnement\n");
+            scanf("%d", &c2);
+            system("cls");
+            if(c2==1){
+                printf("Choisir: 1.Par Nom ou 2.Par ID\n");
+                scanf("%d",&c3);
+                if(c3==1){
+                    printf("donner le nom du m�dic � chercher"); scanf("%s",&nom_medic);
+                    RechercheParNom(nom_medic);}
+                else if(c3==2){
+                    printf("donner le ID du medicament à chercher");
+                    scanf("%d",&id_med);
+                    RechercheParID(id_med);}
+                else
+                    printf("Incorrect");}
+            else if(c2==2){
+                affichage_stock();
+            }
+            else if(c2==3){
+                MiseAJourApresVente();}
+            else if(c2==4){
+                MiseAJourApresApprovisionnement();
+            }
+        }
+        else if(c1==3){
+            printf("Choisir quelle fonctionnalité à appliquer:\n");
+            printf("1. Enregistrement et Gestion d'une vente\n");
+            printf("2. Afficher l'historique des ventes\n");
+            scanf("%d", &c2);
+            system("cls");
+            if(c2==1)
+                liste = ajouterVente(liste);
+            else if(c2==2){
+                afficherHistorique(liste);
+            }
+        }
+        else if(c1==4){
+            sauvegarderDansFichier("medicaments.txt");
+        }
+        system("pause");
+    }
+    while (c1!=5);
 }
