@@ -343,7 +343,7 @@ int main(){
             printf("Choisir quelle fonctionnalité à appliquer:\n");
             printf("1. Rechercher un médicament\n");
             printf("2. Afficher les médicaments en stock et ceux en rupture\n");
-            printf("3. Mise à jour aprés venten");
+            printf("3. Mise à jour aprés vente\n");
             printf("4. Mise à jour aprés approvisionnement\n");
             scanf("%d", &c2);
             system("cls");
