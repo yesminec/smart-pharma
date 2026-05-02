@@ -314,76 +314,110 @@ int main(){
         while(getchar() != '\n');
         system("cls");
         if(c1==1){
-            printf("Choisir quelle fonctionnalité à appliquer:\n");
-            printf("1. Ajouter un médicament\n");
-            printf("2. Modifier un médicament\n");
-            printf("3. Supprimer un médicament\n");
-            printf("4. Afficher tous les médicaments expirés\n");
-            scanf("%d", &c2);
-            system("cls");
-            if(c2==1)
-                ajouterMedicament();
-            else if(c2==2){
-                printf("Donner le ID du médicament à modifier: \n ");
-                scanf("%d", &id_med);
-                modifierMedicament(id_med);
-            }
-            else if(c2==3){
-                printf("Donner le ID du médicament à supprimer: \n");
-                scanf("%d", &id_med);
-                supprimer(id_med);
-            }
-            else if(c2==4){
-                printf("Date d'aujourd'hui: \n");
-                scanf("%9s", date_auj);
-                afficherMedicamentExpires(date_auj);
-            }
+            do{
+                system("cls");
+                printf("Gestion de médicaments:\n");
+                printf("1. Ajouter un médicament\n");
+                printf("2. Modifier un médicament\n");
+                printf("3. Supprimer un médicament\n");
+                printf("4. Afficher tous les médicaments expirés\n");
+                printf("0. Retour au menu principal\n");
+                scanf("%d", &c2);
+                while(getchar() != '\n');
+                system("cls");
+                if(c2==1)
+                    ajouterMedicament();
+                else if(c2==2){
+                    printf("Donner le ID du médicament à modifier: \n");
+                    scanf("%d", &id_med);
+                    while(getchar() != '\n');
+                    modifierMedicament(id_med);
+                }
+                else if(c2==3){
+                    printf("Donner le ID du médicament à supprimer: \n");
+                    scanf("%d", &id_med);
+                    while(getchar() != '\n');
+                    supprimer(id_med);
+                }
+                else if(c2==4){
+                    printf("Date d'aujourd'hui: \n");
+                    scanf("%9s", date_auj);
+                    while(getchar() != '\n');
+                    afficherMedicamentExpires(date_auj);
+                }
+                else if(c2 != 0)
+                    printf("Choix invalide!\n");
+                if(c2 != 0) system("pause");
+            } while(c2 != 0); 
         }
+
         else if(c1==2){
-            printf("Choisir quelle fonctionnalité à appliquer:\n");
-            printf("1. Rechercher un médicament\n");
-            printf("2. Afficher les médicaments en stock et ceux en rupture\n");
-            printf("3. Mise à jour aprés vente\n");
-            printf("4. Mise à jour aprés approvisionnement\n");
-            scanf("%d", &c2);
-            system("cls");
-            if(c2==1){
-                printf("Choisir: 1.Par Nom ou 2.Par ID\n");
-                scanf("%d",&c3);
-                if(c3==1){
-                    printf("donner le nom du m�dic � chercher"); scanf("%s",&nom_medic);
-                    RechercheParNom(nom_medic);}
-                else if(c3==2){
-                    printf("donner le ID du medicament à chercher");
-                    scanf("%d",&id_med);
-                    RechercheParID(id_med);}
-                else
-                    printf("Incorrect");}
-            else if(c2==2){
-                affichage_stock();
-            }
-            else if(c2==3){
-                MiseAJourApresVente();}
-            else if(c2==4){
-                MiseAJourApresApprovisionnement();
-            }
+            do{
+                system("cls");
+                printf("Gestion de stock:\n");
+                printf("1. Rechercher un médicament\n");
+                printf("2. Afficher les médicaments en stock et ceux en rupture\n");
+                printf("3. Mise à jour après vente\n");
+                printf("4. Mise à jour après approvisionnement\n");
+                printf("0. Retour au menu principal\n");
+                scanf("%d", &c2);
+                while(getchar() != '\n');
+                system("cls");
+                if(c2==1){
+                    printf("Choisir: 1.Par Nom ou 2.Par ID\n");
+                    scanf("%d",&c3);
+                    while(getchar() != '\n');
+                    if(c3==1){
+                        printf("Donner le nom du médicament à chercher: ");
+                        scanf("%49s", nom_medic);
+                        while(getchar() != '\n');
+                        RechercheParNom(nom_medic);
+                    }
+                    else if(c3==2){
+                        printf("Donner le ID du médicament à chercher: ");
+                        scanf("%d",&id_med);
+                        while(getchar() != '\n');
+                        RechercheParID(id_med);
+                    }
+                    else
+                        printf("Choix invalide!\n");
+                }
+                else if(c2==2)
+                    affichage_stock();
+                else if(c2==3)
+                    MiseAJourApresVente();
+                else if(c2==4)
+                    MiseAJourApresApprovisionnement();
+                else if(c2 != 0)
+                    printf("Choix invalide!\n");
+                if(c2 != 0) system("pause");
+            } while(c2 != 0);
         }
+
         else if(c1==3){
-            printf("Choisir quelle fonctionnalité à appliquer:\n");
-            printf("1. Enregistrement et Gestion d'une vente\n");
-            printf("2. Afficher l'historique des ventes\n");
-            scanf("%d", &c2);
-            system("cls");
-            if(c2==1)
-                liste = ajouterVente(liste);
-            else if(c2==2){
-                afficherHistorique(liste);
-            }
+            do{
+                system("cls");
+                printf("Gestion de ventes:\n");
+                printf("1. Enregistrement et Gestion d'une vente\n");
+                printf("2. Afficher l'historique des ventes\n");
+                printf("0. Retour au menu principal\n"); 
+                scanf("%d", &c2);
+                while(getchar() != '\n');
+                system("cls");
+                if(c2==1)
+                    liste = ajouterVente(liste);
+                else if(c2==2)
+                    afficherHistorique(liste);
+                else if(c2 != 0)
+                    printf("Choix invalide!\n");
+                if(c2 != 0) system("pause");
+            } while(c2 != 0);
         }
         else if(c1==4){
             sauvegarderDansFichier("medicaments.txt");
+            system("pause");
         }
-        system("pause");
-    }
-    while (c1!=5);
+        else if(c1 != 5)
+            printf("Choix invalide!\n");
+    } while(c1 != 5);
 }
