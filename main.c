@@ -398,8 +398,7 @@ int main(){
                 printf("Gestion de stock:\n");
                 printf("1. Rechercher un médicament\n");
                 printf("2. Afficher les médicaments en stock et ceux en rupture\n");
-                printf("3. Mise à jour après vente\n");
-                printf("4. Mise à jour après approvisionnement\n");
+                printf("3. Mise à jour après approvisionnement\n");
                 printf("0. Retour au menu principal\n");
                 scanf("%d", &c2);
                 while(getchar() != '\n');
@@ -426,8 +425,6 @@ int main(){
                 else if(c2==2)
                     affichage_stock();
                 else if(c2==3)
-                    MiseAJourApresVente();
-                else if(c2==4)
                     MiseAJourApresApprovisionnement();
                 else if(c2 != 0)
                     printf("Choix invalide!\n");
