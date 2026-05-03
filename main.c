@@ -13,14 +13,19 @@ typedef struct noeud{
    Medicament info;
    struct noeud* suivant;} Noeud;
 Noeud* tete = NULL;
-typedef struct Vente {
-    int idVente;
+typedef struct LigneVente {
     int idProduit;
     int quantite;
     float prixUnitaire;
+    float prixLigne;
+    struct LigneVente *suivant;
+} LigneVente;
+typedef struct Vente {
+    int idVente;
     float prixTotal;
     float montantPaye;
     float reste;
+    LigneVente *produits;
     struct Vente *suivant;
 } Vente;
 Vente *liste = NULL;
@@ -235,96 +240,49 @@ void MiseAJourApresApprovisionnement(){
     }
     printf("Médicament introuvable.\n");
 }
-//10//
-/* Structure pour un produit vendu dans une vente */
-typedef struct LigneVente {
-    int idProduit;
-    int quantite;
-    float prixUnitaire;
-    float prixLigne;
-    struct LigneVente *suivant;
-} LigneVente;
-
-/* Structure pour une vente complete */
-typedef struct Vente {
-    int idVente;
-    float prixTotal;
-    float montantPaye;
-    float reste;
-    LigneVente *produits;
-    struct Vente *suivant;
-} Vente;
-
-/* Fonction qui calcule le total d'un produit */
+//9//
 float calculerTotal(int quantite, float prixUnitaire) {
     return quantite * prixUnitaire;
 }
-
-/* Fonction pour ajouter une vente avec plusieurs produits */
+//10//
 Vente* ajouterVente(Vente *liste) {
     Vente *nouvelleVente;
     LigneVente *nouveauProduit;
-    int nbProduits;
-    int i;
-
+    int nbProduits, i;
     nouvelleVente = (Vente*) malloc(sizeof(Vente));
-
-    if (nouvelleVente == NULL) {
+    if (nouvelleVente == NULL){
         printf("Erreur d'allocation memoire.\n");
         return liste;
     }
-
     printf("\n--- Nouvelle vente ---\n");
-
-    printf("ID vente: ");
-    scanf("%d", &nouvelleVente->idVente);
-
+    printf("ID vente: "); scanf("%d", &nouvelleVente->idVente);
     nouvelleVente->prixTotal = 0;
     nouvelleVente->produits = NULL;
-
-    printf("Combien de produits voulez-vous vendre ? ");
-    scanf("%d", &nbProduits);
-
+    printf("Combien de produits voulez-vous vendre ? "); scanf("%d", &nbProduits);
     for (i = 1; i <= nbProduits; i++) {
         nouveauProduit = (LigneVente*) malloc(sizeof(LigneVente));
-
         if (nouveauProduit == NULL) {
             printf("Erreur d'allocation memoire.\n");
             return liste;
         }
-
         printf("\n--- Produit numero %d ---\n", i);
-
         printf("ID produit: ");
         scanf("%d", &nouveauProduit->idProduit);
-
         printf("Quantite: ");
         scanf("%d", &nouveauProduit->quantite);
-
         printf("Prix unitaire: ");
         scanf("%f", &nouveauProduit->prixUnitaire);
-
-        nouveauProduit->prixLigne = calculerTotal(
-            nouveauProduit->quantite,
-            nouveauProduit->prixUnitaire
-        );
-
+        nouveauProduit->prixLigne = calculerTotal(nouveauProduit->quantite,nouveauProduit->prixUnitaire);
         nouvelleVente->prixTotal = nouvelleVente->prixTotal + nouveauProduit->prixLigne;
-
         nouveauProduit->suivant = nouvelleVente->produits;
         nouvelleVente->produits = nouveauProduit;
-
         printf("Total de ce produit: %.2f DT\n", nouveauProduit->prixLigne);
     }
-
     printf("\nMontant total a payer: %.2f DT\n", nouvelleVente->prixTotal);
-
     printf("Montant donne par le client: ");
     scanf("%f", &nouvelleVente->montantPaye);
-
     printf("\nMontant total a payer: %.2f DT\n", nouvelleVente->prixTotal);
     printf("Montant donne par le client: %.2f DT\n", nouvelleVente->montantPaye);
-
     if (nouvelleVente->montantPaye >= nouvelleVente->prixTotal) {
         nouvelleVente->reste = nouvelleVente->montantPaye - nouvelleVente->prixTotal;
         printf("Paiement suffisant.\n");
@@ -334,10 +292,8 @@ Vente* ajouterVente(Vente *liste) {
         printf("Paiement insuffisant.\n");
         printf("Reste a payer: %.2f DT\n", nouvelleVente->reste);
     }
-
     nouvelleVente->suivant = liste;
     liste = nouvelleVente;
-
     return liste;
 }
 
@@ -347,38 +303,29 @@ void afficherHistorique(Vente *liste) {
     LigneVente *prod;
     int i = 1;
     int j;
-
     if (liste == NULL) {
         printf("\nAucune vente enregistree.\n");
     } else {
         printf("\n--- Historique des ventes ---\n");
-
         p = liste;
-
         while (p != NULL) {
             printf("\n============================\n");
             printf("Vente numero %d\n", i);
             printf("ID vente: %d\n", p->idVente);
-
             printf("\nProduits vendus:\n");
-
             prod = p->produits;
             j = 1;
-
             while (prod != NULL) {
                 printf("\nProduit numero %d\n", j);
                 printf("ID produit: %d\n", prod->idProduit);
                 printf("Quantite: %d\n", prod->quantite);
                 printf("Prix unitaire: %.2f DT\n", prod->prixUnitaire);
                 printf("Total produit: %.2f DT\n", prod->prixLigne);
-
                 prod = prod->suivant;
                 j++;
             }
-
             printf("\nMontant total de la vente: %.2f DT\n", p->prixTotal);
             printf("Montant donne: %.2f DT\n", p->montantPaye);
-
             if (p->montantPaye >= p->prixTotal) {
                 printf("Paiement: suffisant\n");
                 printf("Reste a rendre: %.2f DT\n", p->reste);
@@ -487,35 +434,27 @@ int main(){
                 if(c2 != 0) system("pause");
             } while(c2 != 0);
         }
-            else if(c1==3){
-    do{
-        system("cls");
-
-        printf("Gestion de ventes:\n");
-        printf("1. Enregistrer une vente avec plusieurs produits\n");
-        printf("2. Afficher l'historique des ventes\n");
-        printf("0. Retour au menu principal\n");
-        printf("Votre choix: ");
-
-        scanf("%d", &c2);
-        while(getchar() != '\n');
-
-        system("cls");
-
-        if(c2==1)
-            liste = ajouterVente(liste);
-
-        else if(c2==2)
-            afficherHistorique(liste);
-
-        else if(c2 != 0)
-            printf("Choix invalide!\n");
-
-        if(c2 != 0)
-            system("pause");
-
-    } while(c2 != 0);
-}
+        else if(c1==3){
+            do{
+                system("cls");
+                printf("Gestion de ventes:\n");
+                printf("1. Enregistrer une vente\n");
+                printf("2. Afficher l'historique des ventes\n");
+                printf("0. Retour au menu principal\n");
+                printf("Votre choix: ");
+                scanf("%d", &c2);
+                while(getchar() != '\n');
+                system("cls");
+                if(c2==1)
+                    liste = ajouterVente(liste);
+                else if(c2==2)
+                    afficherHistorique(liste);
+                else if(c2 != 0)
+                    printf("Choix invalide!\n");
+                if(c2 != 0)
+                    system("pause");
+            } while(c2 != 0);
+        }
         else if(c1==4){
             sauvegarderDansFichier("medicaments.txt");
             system("pause");
