@@ -355,7 +355,7 @@ Vente* ajouterVente(Vente *liste) {
                 nouveauProduit->prixUnitaire = courant->info.prix;
                 printf("\n  Quantite a vendre : ");
                 scanf("%d", &nouveauProduit->quantite);
-                if (nouveauProduit->quantite <= 0) {
+                if (nouveauProduit->quantite = 0) {
                     SetConsoleTextAttribute(h, 4);
                     printf("  Quantite invalide !\n");
                     SetConsoleTextAttribute(h, 7);
