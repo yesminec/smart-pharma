@@ -481,9 +481,7 @@ int main(){
     int c1=0, c2=0, c3=0, id_med=0;
     char nom_medic[50], date_auj[20];
     h = GetStdHandle(STD_OUTPUT_HANDLE);
-    SetConsoleCP(65001);
-    SetConsoleOutputCP(65001);
-    chargerDepuisFichier("medicaments.txt");  // ✅ chargement au démarrage
+    chargerDepuisFichier("medicaments.txt");  
     do {
         system("cls");
         SetConsoleTextAttribute(h, 11);
