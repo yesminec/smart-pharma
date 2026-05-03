@@ -34,9 +34,6 @@ typedef struct Vente {
     struct Vente *suivant;
 } Vente;
 Vente *liste = NULL;
-Medicament meds[100];
-int n = 0;
-
 HANDLE h;
 // 11 = Cyan vif      Menu principal
 // 10 = Vert vif      Gestion medicaments
