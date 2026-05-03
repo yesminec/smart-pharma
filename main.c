@@ -122,13 +122,7 @@ void sauvegarderDansFichier(const char* nomFichier){
     }
     Noeud* courant = tete;
     while(courant != NULL){
-        fprintf(f, "%d %s %.2f %d %s\n",
-                courant->info.id,
-                courant->info.nom,
-                courant->info.prix,
-                courant->info.quantite,
-                courant->info.dateExpiration);
-
+        fprintf(f, "%d %s %.2f %d %s\n",courant->info.id,courant->info.nom,courant->info.prix,courant->info.quantite,courant->info.dateExpiration);
         courant = courant->suivant;
     }
     fclose(f);
