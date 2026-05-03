@@ -497,9 +497,9 @@ int main(){
         printf("          |   2. Gestion de stock                   |\n");
         printf("          |   3. Gestion de ventes                  |\n");
         printf("          |   4. Sauvegarder dans un fichier        |\n");
-        printf("          |   5. Charger depuis un fichier          |\n");  // ✅ nouvelle option
+        printf("          |   5. Charger depuis un fichier          |\n");  
         SetConsoleTextAttribute(h, 4);
-        printf("          |   6. Quitter                            |\n");  // ✅ était 5
+        printf("          |   6. Quitter                            |\n");  
         SetConsoleTextAttribute(h, 11);
         printf("          |                                         |\n");
         printf("          +=========================================+\n");
