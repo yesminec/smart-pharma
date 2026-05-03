@@ -167,6 +167,28 @@ void sauvegarderDansFichier(const char* nomFichier){
     SetConsoleTextAttribute(h, 7);
 }
 
+void chargerDepuisFichier(const char* nomFichier) {
+    FILE* f = fopen(nomFichier, "r");
+    if (f == NULL) {
+        SetConsoleTextAttribute(h, 4);
+        printf("  Erreur ouverture fichier !\n");
+        SetConsoleTextAttribute(h, 7);
+        return;}
+    Medicament temp;
+    while (fscanf(f, "%d %s %f %d %s",&temp.id,temp.nom,&temp.prix,&temp.quantite,temp.dateExpiration) == 5){
+        Noeud* nouveau = (Noeud*) malloc(sizeof(Noeud));
+        if (nouveau == NULL) {
+            SetConsoleTextAttribute(h, 4);
+            printf("  Erreur d'allocation memoire.\n");
+            SetConsoleTextAttribute(h, 7);
+            break;}
+        nouveau->info = temp;
+        nouveau->suivant = tete;
+        tete = nouveau;}
+    fclose(f);
+    SetConsoleTextAttribute(h, 10);
+    printf("  Donnees chargees avec succes.\n");
+    SetConsoleTextAttribute(h, 7);}
 //5.a//
 void RechercheParNom(char nom_med[]){
     Noeud* courant = tete;
@@ -277,30 +299,6 @@ void MiseAJourApresApprovisionnement(){
     printf("Medicament introuvable.\n");
     SetConsoleTextAttribute(h, 7);
 }
-
-void chargerDepuisFichier(const char* nomFichier) {
-    FILE* f = fopen(nomFichier, "r");
-    if (f == NULL) {
-        SetConsoleTextAttribute(h, 4);
-        printf("  Erreur ouverture fichier !\n");
-        SetConsoleTextAttribute(h, 7);
-        return;}
-    Medicament temp;
-    while (fscanf(f, "%d %s %f %d %s",&temp.id,temp.nom,&temp.prix,&temp.quantite,temp.dateExpiration) == 5){
-        Noeud* nouveau = (Noeud*) malloc(sizeof(Noeud));
-        if (nouveau == NULL) {
-            SetConsoleTextAttribute(h, 4);
-            printf("  Erreur d'allocation memoire.\n");
-            SetConsoleTextAttribute(h, 7);
-            break;}
-        nouveau->info = temp;
-        nouveau->suivant = tete;
-        tete = nouveau;}
-    fclose(f);
-    SetConsoleTextAttribute(h, 10);
-    printf("  Donnees chargees avec succes.\n");
-    SetConsoleTextAttribute(h, 7);}
-
 //10//
 float calculerTotal(int quantite, float prixUnitaire) {
     return quantite * prixUnitaire;
