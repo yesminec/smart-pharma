@@ -201,28 +201,6 @@ void affichage_stock(){
     if (compteur == 0)
         printf("Aucun médicament en rupture de stock.\n");
 }
-//7//
-void MiseAJourApresVente(){
-    int IDVente, QVendue;
-    printf("Donner le ID du médicament vendu"); scanf("%d",&IDVente);
-    printf("Donner la quantité du médicament vendu"); scanf("%d",&QVendue);
-    Noeud* courant = tete;
-    while (courant != NULL) {
-        if (courant->info.id == IDVente) {
-            if (QVendue > courant->info.quantite) {
-                printf("Stock insuffisant ! Stock actuel: %d\n",
-                        courant->info.quantite);
-            } else {
-                courant->info.quantite -= QVendue;
-                printf("Vente effectuée. Nouvelle quantité: %d\n",
-                        courant->info.quantite);
-            }
-            return;
-        }
-        courant = courant->suivant;
-    }
-    printf("Médicament introuvable.\n");
-}
 //8//
 void MiseAJourApresApprovisionnement(){
     int IDAppro, QAppro;
@@ -250,15 +228,17 @@ Vente* ajouterVente(Vente *liste) {
     LigneVente *nouveauProduit;
     int nbProduits, i;
     nouvelleVente = (Vente*) malloc(sizeof(Vente));
-    if (nouvelleVente == NULL){
+    if (nouvelleVente == NULL) {
         printf("Erreur d'allocation memoire.\n");
         return liste;
     }
     printf("\n--- Nouvelle vente ---\n");
-    printf("ID vente: "); scanf("%d", &nouvelleVente->idVente);
+    printf("ID vente: ");
+    scanf("%d", &nouvelleVente->idVente);
     nouvelleVente->prixTotal = 0;
     nouvelleVente->produits = NULL;
-    printf("Combien de produits voulez-vous vendre ? "); scanf("%d", &nbProduits);
+    printf("Combien de produits voulez-vous vendre ? ");
+    scanf("%d", &nbProduits);
     for (i = 1; i <= nbProduits; i++) {
         nouveauProduit = (LigneVente*) malloc(sizeof(LigneVente));
         if (nouveauProduit == NULL) {
@@ -268,44 +248,67 @@ Vente* ajouterVente(Vente *liste) {
         printf("\n--- Produit numero %d ---\n", i);
         printf("ID produit: ");
         scanf("%d", &nouveauProduit->idProduit);
-        printf("Quantite: ");
-        scanf("%d", &nouveauProduit->quantite);
-        printf("Prix unitaire: ");
-        scanf("%f", &nouveauProduit->prixUnitaire);
-        nouveauProduit->prixLigne = calculerTotal(nouveauProduit->quantite,nouveauProduit->prixUnitaire);
-        nouvelleVente->prixTotal = nouvelleVente->prixTotal + nouveauProduit->prixLigne;
-        nouveauProduit->suivant = nouvelleVente->produits;
-        nouvelleVente->produits = nouveauProduit;
-        printf("Total de ce produit: %.2f DT\n", nouveauProduit->prixLigne);
+        Noeud *courant = tete;
+        int trouve = 0;
+        while (courant != NULL) {
+            if (courant->info.id == nouveauProduit->idProduit) {
+                trouve = 1;
+                printf("Medicament trouve: %s\n", courant->info.nom);
+                printf("Prix unitaire automatique: %.2f DT\n", courant->info.prix);
+                printf("Quantite disponible: %d\n", courant->info.quantite);
+                nouveauProduit->prixUnitaire = courant->info.prix;
+                printf("Quantite: ");
+                scanf("%d", &nouveauProduit->quantite);
+                if (nouveauProduit->quantite <= 0) {
+                    printf("Quantite invalide.\n");
+                    free(nouveauProduit);
+                    i--;
+                    break;}
+                if (nouveauProduit->quantite > courant->info.quantite) {
+                    printf("Stock insuffisant.\n");
+                    printf("Quantite disponible: %d\n", courant->info.quantite);
+                    free(nouveauProduit);
+                    i--;
+                    break;}
+                courant->info.quantite = courant->info.quantite - nouveauProduit->quantite;
+                printf("Stock mis a jour. Nouvelle quantite: %d\n", courant->info.quantite);
+                nouveauProduit->prixLigne = calculerTotal(nouveauProduit->quantite,nouveauProduit->prixUnitaire);
+                nouvelleVente->prixTotal = nouvelleVente->prixTotal + nouveauProduit->prixLigne;
+                nouveauProduit->suivant = nouvelleVente->produits;
+                nouvelleVente->produits = nouveauProduit;
+                printf("Total de ce produit: %.2f DT\n", nouveauProduit->prixLigne);
+                break;}
+            courant = courant->suivant;}
+        if (trouve == 0) {
+            printf("Medicament introuvable.\n");
+            free(nouveauProduit);
+            i--;
+            continue;}
     }
     printf("\nMontant total a payer: %.2f DT\n", nouvelleVente->prixTotal);
-    printf("Montant donne par le client: ");
-    scanf("%f", &nouvelleVente->montantPaye);
+    printf("Montant donne par le client: "); scanf("%f", &nouvelleVente->montantPaye);
     printf("\nMontant total a payer: %.2f DT\n", nouvelleVente->prixTotal);
     printf("Montant donne par le client: %.2f DT\n", nouvelleVente->montantPaye);
-    if (nouvelleVente->montantPaye >= nouvelleVente->prixTotal) {
+    if (nouvelleVente->montantPaye >= nouvelleVente->prixTotal){
         nouvelleVente->reste = nouvelleVente->montantPaye - nouvelleVente->prixTotal;
         printf("Paiement suffisant.\n");
-        printf("Reste a rendre: %.2f DT\n", nouvelleVente->reste);
-    } else {
+        printf("Reste a rendre: %.2f DT\n", nouvelleVente->reste);}
+    else {
         nouvelleVente->reste = nouvelleVente->prixTotal - nouvelleVente->montantPaye;
         printf("Paiement insuffisant.\n");
-        printf("Reste a payer: %.2f DT\n", nouvelleVente->reste);
-    }
+        printf("Reste a payer: %.2f DT\n", nouvelleVente->reste);}
     nouvelleVente->suivant = liste;
     liste = nouvelleVente;
-    return liste;
-}
+    return liste;}
 
-/* Procedure pour afficher l'historique des ventes */
 void afficherHistorique(Vente *liste) {
     Vente *p;
     LigneVente *prod;
     int i = 1;
     int j;
     if (liste == NULL) {
-        printf("\nAucune vente enregistree.\n");
-    } else {
+        printf("\nAucune vente enregistree.\n");}
+    else {
         printf("\n--- Historique des ventes ---\n");
         p = liste;
         while (p != NULL) {
@@ -322,18 +325,15 @@ void afficherHistorique(Vente *liste) {
                 printf("Prix unitaire: %.2f DT\n", prod->prixUnitaire);
                 printf("Total produit: %.2f DT\n", prod->prixLigne);
                 prod = prod->suivant;
-                j++;
-            }
+                j++;}
             printf("\nMontant total de la vente: %.2f DT\n", p->prixTotal);
             printf("Montant donne: %.2f DT\n", p->montantPaye);
             if (p->montantPaye >= p->prixTotal) {
                 printf("Paiement: suffisant\n");
-                printf("Reste a rendre: %.2f DT\n", p->reste);
-            } else {
+                printf("Reste a rendre: %.2f DT\n", p->reste);}
+            else {
                 printf("Paiement: insuffisant\n");
-                printf("Reste a payer: %.2f DT\n", p->reste);
-            }
-
+                printf("Reste a payer: %.2f DT\n", p->reste);}
             p = p->suivant;
             i++;
         }
